@@ -9,18 +9,18 @@ public class PositionedWrapper extends PositionedWidget {
     private final AbstractWidget wrapped;
 
     public PositionedWrapper(Container parent, String id, String click, AbstractWidget wrapped) {
-        super(parent, wrapped.x, wrapped.y, wrapped.getWidth(), wrapped.getHeight(), id, click);
+        super(parent, wrapped.getX(), wrapped.getY(), wrapped.getWidth(), wrapped.getHeight(), id, click);
         this.wrapped = wrapped;
 
-        wrapped.x = x;
-        wrapped.y = y;
+        wrapped.setX(x);
+        wrapped.setY(y);
     }
 
     @Override
     public void moveTo(int x, int y) {
         super.moveTo(x, y);
-        wrapped.x = x;
-        wrapped.y = y;
+        wrapped.setX(x);
+        wrapped.setY(y);
     }
 
     @Override

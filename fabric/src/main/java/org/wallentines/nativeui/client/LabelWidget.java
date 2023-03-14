@@ -3,12 +3,12 @@ package org.wallentines.nativeui.client;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.math.Matrix4f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Matrix4f;
 import org.wallentines.nativeui.control.Label;
 
 public class LabelWidget extends PositionedWidget {
@@ -35,10 +35,10 @@ public class LabelWidget extends PositionedWidget {
         Matrix4f mat = poseStack.last().pose();
 
         RenderSystem.disableBlend();
-        RenderSystem.enableTexture();
+        //RenderSystem.enableTexture();
         MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
 
-        font.drawInBatch(text, x, y, -1, true, mat, buffer, false, 0, 15728880);
+        font.drawInBatch(text, x, y, -1, true, mat, buffer, Font.DisplayMode.NORMAL, 0, 15728880);
 
         buffer.endBatch();
 

@@ -1,11 +1,11 @@
 package org.wallentines.nativeui.client;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +39,7 @@ public class TooltipWidget extends ContainerWidget implements ClientTooltipCompo
 
         Rect2i scissor = clearScissor();
 
-        ((AccessorScreen) s).drawCustomTooltip(poseStack, Collections.singletonList(this), mx, my);
+        ((AccessorScreen) s).drawCustomTooltip(poseStack, Collections.singletonList(this), mx, my, DefaultTooltipPositioner.INSTANCE);
 
         if(scissor != null) setScissor(scissor);
     }
@@ -55,6 +55,8 @@ public class TooltipWidget extends ContainerWidget implements ClientTooltipCompo
         }
 
     }
+
+
 
     @Override
     public int getHeight() {
@@ -72,18 +74,19 @@ public class TooltipWidget extends ContainerWidget implements ClientTooltipCompo
     }
 
     @Override
-    public void renderImage(@NotNull Font font, int i, int j, @NotNull PoseStack poseStack, @NotNull ItemRenderer itemRenderer, int k) {
+    public void renderImage(@NotNull Font font, int i, int j, @NotNull PoseStack poseStack, @NotNull ItemRenderer itemRenderer) {
 
         moveTo(i, j);
 
         poseStack.pushPose();
-        poseStack.translate(0,0, k);
 
         for(PositionedWidget w : children) {
             w.render(poseStack, i, j, 0.0f);
         }
 
         poseStack.popPose();
+
+        ClientTooltipComponent.super.renderImage(font, i, j, poseStack, itemRenderer);
     }
 
 }

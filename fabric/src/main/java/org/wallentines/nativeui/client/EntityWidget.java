@@ -5,27 +5,22 @@ import com.mojang.authlib.properties.Property;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.RemotePlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.PlayerModelPart;
-import net.minecraft.world.level.GameType;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Quaternionf;
 import org.wallentines.midnightcore.api.module.skin.Skin;
 import org.wallentines.midnightcore.fabric.util.ConversionUtil;
-import org.wallentines.nativeui.NativeUI;
 import org.wallentines.nativeui.control.EntityModel;
 
 import java.util.UUID;
@@ -43,7 +38,7 @@ public class EntityWidget extends PositionedWidget {
         ClientLevel lvl = Minecraft.getInstance().level;
         if(lvl == null) return;
 
-        EntityType<?> type = Registry.ENTITY_TYPE.get(ConversionUtil.toResourceLocation(model.getEntityType()));
+        EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.get(ConversionUtil.toResourceLocation(model.getEntityType()));
         CompoundTag tag = model.getNbt() == null ? null : ConversionUtil.toCompoundTag(model.getNbt());
 
         Entity ent;
@@ -58,8 +53,8 @@ public class EntityWidget extends PositionedWidget {
                 prof.getProperties().put("textures", new Property("textures", s.getValue(), s.getSignature()));
             }
 
-            ent = new RemotePlayer(lvl, prof, null) {
-                private final PlayerInfo inf = new PlayerInfo(new ClientboundPlayerInfoPacket.PlayerUpdate(prof, 0, GameType.SURVIVAL, Component.empty(), null), null, false);
+            ent = new RemotePlayer(lvl, prof) {
+                private final PlayerInfo inf = new PlayerInfo(prof, false);
 
                 @Override
                 protected PlayerInfo getPlayerInfo() {
@@ -110,8 +105,10 @@ public class EntityWidget extends PositionedWidget {
         poseStack.translate(0,0,100);
         poseStack.scale(mobScale, mobScale, mobScale);
 
-        Quaternion zQuat = Vector3f.ZP.rotationDegrees(180.0F);
-        Quaternion xQuat = Vector3f.XP.rotationDegrees(xRot * 20.0F);
+
+        Quaternionf zQuat = (new Quaternionf()).rotateZ(3.1415927F);
+        Quaternionf xQuat = (new Quaternionf()).rotateX(xRot * 20.0F * 0.017453292F);
+
         zQuat.mul(xQuat);
 
         poseStack.mulPose(zQuat);
@@ -125,7 +122,7 @@ public class EntityWidget extends PositionedWidget {
         Lighting.setupForEntityInInventory();
 
         EntityRenderDispatcher dispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
-        xQuat.conj();
+        xQuat.conjugate();
         dispatcher.overrideCameraOrientation(xQuat);
         dispatcher.setRenderShadow(false);
 

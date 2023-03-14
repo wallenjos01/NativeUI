@@ -2,20 +2,20 @@ package org.wallentines.nativeui.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import com.mojang.math.Matrix4f;
 import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.GameRenderer;
 import org.jetbrains.annotations.NotNull;
-import org.wallentines.midnightcore.api.module.messaging.ClientMessagingModule;
-import org.wallentines.midnightcore.fabric.client.MidnightCoreClient;
+import org.joml.Matrix4f;
+import org.wallentines.midnightcore.client.MidnightCoreClient;
+import org.wallentines.midnightcore.client.module.extension.ClientExtensionModule;
 
 import java.util.Objects;
 
-public abstract class PositionedWidget extends GuiComponent implements Widget, GuiEventListener, NarratableEntry {
+public abstract class PositionedWidget extends GuiComponent implements Renderable, GuiEventListener, NarratableEntry {
 
     protected int x;
     protected int y;
@@ -24,7 +24,7 @@ public abstract class PositionedWidget extends GuiComponent implements Widget, G
     protected final Container parent;
     protected final String id;
     protected final String click;
-
+    protected boolean focused = false;
     private int x0;
     private int y0;
 
@@ -79,7 +79,14 @@ public abstract class PositionedWidget extends GuiComponent implements Widget, G
     public boolean mouseClicked(double d, double e, int i) {
 
         if(click != null && isMouseOver(d, e)) {
-            ClientNetworking.sendClicked(MidnightCoreClient.CLIENT_MODULES.getModule(ClientMessagingModule.class), click);
+
+            ClientExtensionModule exMod = MidnightCoreClient.getModule(ClientExtensionModule.class);
+            if(exMod == null) return true;
+
+            ClientNativeUIExtension ex = exMod.getExtension(ClientNativeUIExtension.class);
+            if(ex == null) return true;
+
+            ex.sendClicked(click);
             return true;
         }
 
@@ -90,7 +97,7 @@ public abstract class PositionedWidget extends GuiComponent implements Widget, G
     public void updateNarration(@NotNull NarrationElementOutput narration) { }
 
     @Override
-    public NarrationPriority narrationPriority() {
+    public @NotNull NarrationPriority narrationPriority() {
         return NarrationPriority.NONE;
     }
 
@@ -118,7 +125,8 @@ public abstract class PositionedWidget extends GuiComponent implements Widget, G
         float x1 = (float) (x + width);
         float y0 = (float) y;
         float y1 = (float) (y + height);
-        float z = getBlitOffset();
+        //float z = getBlitOffset();
+        float z = 0;
 
         float u0 = texU0 / (float) texWidth;
         float v0 = texV0 / (float) texHeight;
@@ -133,5 +141,16 @@ public abstract class PositionedWidget extends GuiComponent implements Widget, G
         bufferBuilder.vertex(mat, x1, y0, z).uv(u1, v0).endVertex();
         bufferBuilder.vertex(mat, x0, y0, z).uv(u0, v0).endVertex();
         BufferUploader.drawWithShader(bufferBuilder.end());
+    }
+
+
+    @Override
+    public void setFocused(boolean bl) {
+        this.focused = true;
+    }
+
+    @Override
+    public boolean isFocused() {
+        return this.focused;
     }
 }

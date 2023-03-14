@@ -10,7 +10,7 @@ public interface ControlConverter<T extends Control> {
 
     PositionedWidget createWidget(Container parent, Control control);
 
-    Registry<ControlConverter<?>> REGISTRY = new Registry<>();
+    Registry<ControlConverter<?>> REGISTRY = new Registry<>("nui");
 
     @SuppressWarnings("unchecked")
     static <T extends Control> PositionedWidget convert(Container parent, T control) {
@@ -57,7 +57,7 @@ public interface ControlConverter<T extends Control> {
         MinecraftButton btn = (MinecraftButton) ctrl;
         Component comp = Component.Serializer.fromJson(btn.getText());
         if(comp == null) comp = Component.empty();
-        return new PositionedWrapper(cont, ctrl.getId(), ctrl.getClickId(), new net.minecraft.client.gui.components.Button(ctrl.getX(), ctrl.getY(), btn.getWidth(), 20, comp, b -> { }));
+        return new PositionedWrapper(cont, ctrl.getId(), ctrl.getClickId(), net.minecraft.client.gui.components.Button.builder(comp, b -> {}).width(btn.getWidth()).pos(ctrl.getX(), ctrl.getY()).build());
     });
 
 
