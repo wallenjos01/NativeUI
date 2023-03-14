@@ -1,11 +1,9 @@
 package org.wallentines.nativeui.control;
 
 import org.wallentines.midnightcore.api.player.MPlayer;
-import org.wallentines.midnightcore.api.text.MComponent;
 import org.wallentines.midnightcore.api.text.PlaceholderManager;
 import org.wallentines.midnightlib.Version;
-import org.wallentines.midnightlib.config.ConfigSection;
-import org.wallentines.midnightlib.config.serialization.json.JsonConfigProvider;
+import org.wallentines.mdcfg.ConfigSection;
 import org.wallentines.nativeui.Constants;
 import org.wallentines.nativeui.CustomMenu;
 
@@ -54,7 +52,7 @@ public class MinecraftButton extends Control {
     @Override
     public void addPacketData(ConfigSection config, MPlayer player) {
         config.set("width", width);
-        config.set("text", JsonConfigProvider.INSTANCE.saveToString(MComponent.SERIALIZER.serialize(PlaceholderManager.INSTANCE.parseText(text, player))));
+        config.set("text", PlaceholderManager.INSTANCE.parseText(text, player).toJSONString());
     }
 
 }

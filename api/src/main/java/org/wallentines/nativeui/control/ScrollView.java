@@ -1,9 +1,10 @@
 package org.wallentines.nativeui.control;
 
 import org.jetbrains.annotations.Nullable;
+import org.wallentines.mdcfg.ConfigObject;
 import org.wallentines.midnightcore.api.player.MPlayer;
 import org.wallentines.midnightlib.Version;
-import org.wallentines.midnightlib.config.ConfigSection;
+import org.wallentines.mdcfg.ConfigSection;
 import org.wallentines.nativeui.Constants;
 import org.wallentines.nativeui.CustomMenu;
 
@@ -72,8 +73,7 @@ public class ScrollView extends AbstractContainerControl {
         height = config.getInt("height");
         bottomPadding = config.getInt("bottom_padding");
 
-        ConfigSection bar = config.getOrDefault("scroll_bar", null, ConfigSection.class);
-        if(bar != null) scrollBar = Control.parse(menu, bar);
+        config.getOptional("scroll_bar").map(ConfigObject::asSection).ifPresent(bar -> scrollBar = Control.parse(menu, bar));
 
         super.readFromConfig(config);
     }

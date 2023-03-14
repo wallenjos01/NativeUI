@@ -4,10 +4,9 @@ import org.wallentines.midnightcore.api.player.MPlayer;
 import org.wallentines.midnightcore.api.text.MComponent;
 import org.wallentines.midnightcore.api.text.PlaceholderManager;
 import org.wallentines.midnightlib.Version;
-import org.wallentines.midnightlib.config.ConfigSection;
-import org.wallentines.midnightlib.config.serialization.json.JsonConfigProvider;
 import org.wallentines.nativeui.Constants;
 import org.wallentines.nativeui.CustomMenu;
+import org.wallentines.mdcfg.ConfigSection;
 
 public class Label extends Control {
 
@@ -45,6 +44,6 @@ public class Label extends Control {
     public void addPacketData(ConfigSection config, MPlayer player) {
 
         MComponent parsed = PlaceholderManager.INSTANCE.parseText(text, player);
-        config.set("text", JsonConfigProvider.INSTANCE.saveToString(MComponent.SERIALIZER.serialize(parsed)));
+        config.set("text", parsed.toJSONString());
     }
 }

@@ -2,7 +2,7 @@ package org.wallentines.nativeui.control;
 
 import org.wallentines.midnightcore.api.player.MPlayer;
 import org.wallentines.midnightlib.Version;
-import org.wallentines.midnightlib.config.ConfigSection;
+import org.wallentines.mdcfg.ConfigSection;
 import org.wallentines.nativeui.Constants;
 import org.wallentines.nativeui.CustomMenu;
 

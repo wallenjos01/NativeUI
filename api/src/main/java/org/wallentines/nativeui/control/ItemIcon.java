@@ -1,9 +1,10 @@
 package org.wallentines.nativeui.control;
 
+import org.wallentines.mdcfg.ConfigSection;
+import org.wallentines.mdcfg.serializer.ConfigContext;
 import org.wallentines.midnightcore.api.item.MItemStack;
 import org.wallentines.midnightcore.api.player.MPlayer;
 import org.wallentines.midnightlib.Version;
-import org.wallentines.midnightlib.config.ConfigSection;
 import org.wallentines.nativeui.Constants;
 import org.wallentines.nativeui.CustomMenu;
 
@@ -36,12 +37,12 @@ public class ItemIcon extends Control {
 
     @Override
     public void readFromConfig(ConfigSection config) {
-        item = MItemStack.SERIALIZER.deserialize(config.getSection("item"));
+        item = MItemStack.SERIALIZER.deserialize(ConfigContext.INSTANCE, config.getSection("item")).getOrThrow();
     }
 
     @Override
     protected void addPacketData(ConfigSection config, MPlayer player) {
-        config.set("item", MItemStack.SERIALIZER.serialize(item));
+        config.set("item", MItemStack.SERIALIZER.serialize(ConfigContext.INSTANCE, item).getOrThrow());
     }
 
 }

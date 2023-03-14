@@ -1,8 +1,8 @@
 package org.wallentines.nativeui.control;
 
+import org.wallentines.mdcfg.ConfigSection;
 import org.wallentines.midnightcore.api.player.MPlayer;
 import org.wallentines.midnightlib.Version;
-import org.wallentines.midnightlib.config.ConfigSection;
 import org.wallentines.midnightlib.registry.Identifier;
 import org.wallentines.nativeui.Constants;
 import org.wallentines.nativeui.CustomMenu;
@@ -97,10 +97,10 @@ public class Image extends Control {
     public void readFromConfig(ConfigSection config) {
         width = config.getInt("width");
         height = config.getInt("height");
-        u = config.getOrDefault("u", 0, Number.class).intValue();
-        v = config.getOrDefault("v", 0, Number.class).intValue();
-        u1 = config.getOrDefault("u1", width, Number.class).intValue();
-        v1 = config.getOrDefault("v1", height, Number.class).intValue();
+        u = config.getOrDefault("u", 0).intValue();
+        v = config.getOrDefault("v", 0).intValue();
+        u1 = config.getOrDefault("u1", width).intValue();
+        v1 = config.getOrDefault("v1", height).intValue();
 
         image = Identifier.parseOrDefault(config.getString("image"), "nui");
     }

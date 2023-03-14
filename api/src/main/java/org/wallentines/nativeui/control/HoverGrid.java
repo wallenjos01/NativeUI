@@ -1,8 +1,10 @@
 package org.wallentines.nativeui.control;
 
+import org.wallentines.mdcfg.ConfigList;
+import org.wallentines.mdcfg.serializer.Serializer;
 import org.wallentines.midnightcore.api.player.MPlayer;
 import org.wallentines.midnightlib.Version;
-import org.wallentines.midnightlib.config.ConfigSection;
+import org.wallentines.mdcfg.ConfigSection;
 import org.wallentines.nativeui.Constants;
 import org.wallentines.nativeui.CustomMenu;
 
@@ -49,15 +51,15 @@ public class HoverGrid extends Grid {
 
     @Override
     public void readFromConfig(ConfigSection config) {
-        if(config.has("hover_only")) hoverOnly = config.getListFiltered("hover_only", Number.class).stream().map(Number::intValue).toList();
-        if(config.has("normal_only")) normalOnly = config.getListFiltered("normal_only", Number.class).stream().map(Number::intValue).toList();
+        if(config.has("hover_only")) hoverOnly = config.getListFiltered("hover_only", Serializer.INT);
+        if(config.has("normal_only")) normalOnly = config.getListFiltered("normal_only", Serializer.INT);
         super.readFromConfig(config);
     }
 
     @Override
     public void addPacketData(ConfigSection config, MPlayer player) {
-        if(!hoverOnly.isEmpty()) config.set("hover_only", hoverOnly);
-        if(!normalOnly.isEmpty()) config.set("normal_only", normalOnly);
+        if(!hoverOnly.isEmpty()) config.set("hover_only", ConfigList.of(hoverOnly));
+        if(!normalOnly.isEmpty()) config.set("normal_only", ConfigList.of(normalOnly));
         super.addPacketData(config, player);
     }
 

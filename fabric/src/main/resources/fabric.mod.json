@@ -6,11 +6,13 @@
     "entrypoints": {
         "midnightcore": [
             "${group}.${id}.${mainClass}"
+        ],
+        "midnightcore_client": [
+            "${group}.${id}.client.ClientInit"
         ]
     },
     "depends": {
         "midnightcore": "*",
-        "fabricloader": ">=${fabricLoader}",
         "minecraft": ">=${minecraftVersion}"
     },
     "name": "${name}",

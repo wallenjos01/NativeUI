@@ -137,7 +137,7 @@ public abstract class ContainerWidget extends PositionedWidget implements Contai
         return children;
     }
     @Override
-    public NarrationPriority narrationPriority() {
+    public @NotNull NarrationPriority narrationPriority() {
         return NarrationPriority.NONE;
     }
     @Override

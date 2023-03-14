@@ -8,7 +8,7 @@ import org.wallentines.nativeui.CustomMenu;
 public interface ControlType<T extends Control> {
 
     T create(CustomMenu menu, int x, int y, @Nullable String id);
-    Registry<ControlType<?>> REGISTRY = new Registry<>();
+    Registry<ControlType<?>> REGISTRY = new Registry<>("nui");
 
     @SuppressWarnings("unchecked")
     private static <T extends Control> ControlType<T> register(String id, ControlType<T> type) {

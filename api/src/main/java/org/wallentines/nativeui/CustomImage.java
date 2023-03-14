@@ -14,9 +14,9 @@ public class CustomImage {
 
     private final int width;
     private final int height;
-    private final String imageData;
+    private final byte[] imageData;
 
-    private CustomImage(int width, int height, String imageData) {
+    private CustomImage(int width, int height, byte[] imageData) {
         this.width = width;
         this.height = height;
         this.imageData = imageData;
@@ -33,11 +33,10 @@ public class CustomImage {
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 ImageIO.write(bufferedImage, "PNG", byteArrayOutputStream);
 
-                byte[] bs = Base64.getEncoder().encode(byteArrayOutputStream.toByteArray());
+                //byte[] bs = Base64.getEncoder().encode(byteArrayOutputStream.toByteArray());
+                //String imageData = new String(bs, StandardCharsets.UTF_8);
 
-                String imageData = new String(bs, StandardCharsets.UTF_8);
-
-                return new CustomImage(bufferedImage.getWidth(), bufferedImage.getHeight(), imageData);
+                return new CustomImage(bufferedImage.getWidth(), bufferedImage.getHeight(), byteArrayOutputStream.toByteArray());
 
             } catch (IOException ex) {
                 // Ignore
@@ -56,7 +55,7 @@ public class CustomImage {
         return height;
     }
 
-    public String getImageData() {
+    public byte[] getImageData() {
         return imageData;
     }
 }

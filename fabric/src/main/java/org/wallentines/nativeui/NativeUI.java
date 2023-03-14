@@ -4,7 +4,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.wallentines.midnightcore.api.module.extension.ExtensionModule;
+import org.wallentines.midnightcore.api.module.extension.ServerExtension;
 
 public class NativeUI implements ModInitializer {
 
@@ -17,6 +17,6 @@ public class NativeUI implements ModInitializer {
             TestStuff.registerTestCommand();
         }
 
-        ExtensionModule.REGISTRY.register(FabricNativeUIExtension.ID, FabricNativeUIExtension.MODULE_INFO);
+        ServerExtension.REGISTRY.register(NativeUIExtension.ID, FabricNativeUIExtension.MODULE_INFO);
     }
 }

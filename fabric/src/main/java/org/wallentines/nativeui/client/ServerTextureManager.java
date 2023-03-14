@@ -1,6 +1,7 @@
 package org.wallentines.nativeui.client;
 
 import com.mojang.blaze3d.platform.NativeImage;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
@@ -9,7 +10,9 @@ import org.wallentines.midnightcore.fabric.util.ConversionUtil;
 import org.wallentines.nativeui.Networking;
 import org.wallentines.nativeui.control.Image;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class ServerTextureManager {
@@ -20,12 +23,13 @@ public class ServerTextureManager {
 
         return loadedImages.computeIfAbsent(index, k -> ConversionUtil.toResourceLocation(Image.generateCustomImageId(index)));
     }
-    public static void loadImage(int index, String data) throws IOException {
+    public static void loadImage(int index, ByteBuf data) throws IOException {
 
         ResourceLocation id = imageId(index);
         loadedImages.put(index, id);
 
-        NativeImage img = NativeImage.fromBase64(data);
+        //byte[] bytes = Base64.getDecoder().decode(data.getBytes(StandardCharsets.UTF_8));
+        NativeImage img = NativeImage.read(data.nioBuffer());
 
         int imageWidth = img.getWidth();
         int imageHeight = img.getHeight();

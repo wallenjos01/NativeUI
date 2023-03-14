@@ -2,10 +2,11 @@ package org.wallentines.nativeui;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import org.wallentines.mdcfg.codec.JSONCodec;
+import org.wallentines.mdcfg.serializer.ConfigContext;
 import org.wallentines.midnightcore.api.module.messaging.MessagingModule;
 import org.wallentines.midnightcore.api.player.MPlayer;
 import org.wallentines.midnightcore.common.module.messaging.PacketBufferUtils;
-import org.wallentines.midnightlib.config.serialization.json.JsonConfigProvider;
 import org.wallentines.nativeui.control.Control;
 
 import java.util.Map;
@@ -43,7 +44,10 @@ public class Networking {
 
         ByteBuf buf = Unpooled.buffer();
         PacketBufferUtils.writeVarInt(buf, index);
-        PacketBufferUtils.writeUtf(buf, imageData.getImageData());
+
+        byte[] data = imageData.getImageData();
+        PacketBufferUtils.writeVarInt(buf, data.length);
+        buf.writeBytes(data);
 
         module.sendRawMessage(mpl, Constants.ADD_IMAGE_PACKET, buf.array());
     }
@@ -57,7 +61,7 @@ public class Networking {
 
             PacketBufferUtils.writeUtf(buf, ent.getKey());
 
-            Optional<String> opt = ent.getValue().map(ctr -> JsonConfigProvider.INSTANCE.saveToString(ctr.writeForPacket(mpl)));
+            Optional<String> opt = ent.getValue().map(ctr -> JSONCodec.minified().encodeToString(ConfigContext.INSTANCE, ctr.writeForPacket(mpl)));
             buf.writeBoolean(opt.isPresent());
 
             opt.ifPresent(str -> PacketBufferUtils.writeUtf(buf, str));

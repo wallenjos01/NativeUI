@@ -38,6 +38,7 @@ dependencies {
 
     modImplementation 'org.wallentines.midnightcore:api:1.0-SNAPSHOT'
     modImplementation 'org.wallentines.midnightcore:common:1.0-SNAPSHOT'
+    modImplementation 'org.wallentines.midnightcore:client:1.0-SNAPSHOT'
     modImplementation 'org.wallentines.midnightcore:fabric:1.0-SNAPSHOT'
 
     include(modImplementation(fabricApi.module('fabric-resource-loader-v0', "${project.fabric_api_version}")))

@@ -1,8 +1,8 @@
 package org.wallentines.nativeui;
 
+import org.wallentines.mdcfg.ConfigSection;
 import org.wallentines.midnightcore.api.player.MPlayer;
 import org.wallentines.midnightlib.Version;
-import org.wallentines.midnightlib.config.ConfigSection;
 import org.wallentines.nativeui.control.Control;
 import org.wallentines.nativeui.control.ControlType;
 
@@ -93,7 +93,7 @@ public class CustomMenu {
 
     public static CustomMenu parse(ConfigSection section) {
 
-        CustomMenu menu = new CustomMenu(section.getBoolean("center_x", true), section.getBoolean("center_y", true));
+        CustomMenu menu = new CustomMenu(section.getOrDefault("center_x", true), section.getOrDefault("center_y", true));
         menu.root = Control.parse(menu, section);
 
         return menu;

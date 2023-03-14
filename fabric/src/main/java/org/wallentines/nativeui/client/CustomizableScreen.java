@@ -7,8 +7,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
-import org.wallentines.midnightcore.api.module.messaging.ClientMessagingModule;
-import org.wallentines.midnightcore.fabric.client.MidnightCoreClient;
+import org.wallentines.midnightcore.client.MidnightCoreClient;
+import org.wallentines.midnightcore.client.module.extension.ClientExtensionModule;
 import org.wallentines.nativeui.CustomMenu;
 
 import java.util.*;
@@ -30,6 +30,7 @@ public class CustomizableScreen extends Screen implements Container {
     protected void init() {
 
         PositionedWidget w = ControlConverter.convert(this, menu.getRoot());
+        if(w == null) return;
 
         int rootWidth = 0;
         int rootHeight = 0;
@@ -54,7 +55,14 @@ public class CustomizableScreen extends Screen implements Container {
     public void removed() {
 
         ServerTextureManager.clearImages();
-        ClientNetworking.sendClosed(MidnightCoreClient.CLIENT_MODULES.getModule(ClientMessagingModule.class));
+
+        ClientExtensionModule exMod = MidnightCoreClient.getModule(ClientExtensionModule.class);
+        if(exMod == null) return;
+
+        ClientNativeUIExtension ex = exMod.getExtension(ClientNativeUIExtension.class);
+        if(ex == null) return;
+
+        ex.sendClosed();
     }
 
     @Override

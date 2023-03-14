@@ -1,9 +1,10 @@
 package org.wallentines.nativeui.control;
 
+import org.wallentines.mdcfg.serializer.ConfigContext;
 import org.wallentines.midnightcore.api.module.skin.Skin;
 import org.wallentines.midnightcore.api.player.MPlayer;
 import org.wallentines.midnightlib.Version;
-import org.wallentines.midnightlib.config.ConfigSection;
+import org.wallentines.mdcfg.ConfigSection;
 import org.wallentines.midnightlib.registry.Identifier;
 import org.wallentines.nativeui.Constants;
 import org.wallentines.nativeui.CustomMenu;
@@ -56,7 +57,7 @@ public class EntityModel extends Control {
 
         if(config.has("entity_type")) entityType = Identifier.parseOrDefault(config.getString("entity_type"), "minecraft");
         if(config.has("nbt")) nbt = config.getSection("nbt");
-        if(config.has("skin")) skin = Skin.SERIALIZER.deserialize(config.getSection("skin"));
+        if(config.has("skin")) skin = Skin.SERIALIZER.deserialize(ConfigContext.INSTANCE, config.getSection("skin")).getOrThrow();
         scale = config.getInt("scale");
     }
 
@@ -65,7 +66,7 @@ public class EntityModel extends Control {
 
         if(entityType != null) config.set("entity_type", entityType.toString());
         if(nbt != null) config.set("nbt", nbt);
-        if(skin != null) config.set("skin", Skin.SERIALIZER.serialize(skin));
+        if(skin != null) config.set("skin", Skin.SERIALIZER.serialize(ConfigContext.INSTANCE, skin).getOrThrow());
         config.set("scale", scale);
     }
 }

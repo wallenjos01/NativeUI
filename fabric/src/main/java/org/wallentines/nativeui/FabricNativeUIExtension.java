@@ -2,64 +2,52 @@ package org.wallentines.nativeui;
 
 import org.wallentines.midnightcore.api.MidnightCoreAPI;
 import org.wallentines.midnightcore.api.item.InventoryGUI;
-import org.wallentines.midnightcore.api.module.extension.Extension;
-import org.wallentines.midnightcore.api.module.extension.ExtensionModule;
-import org.wallentines.midnightcore.api.module.messaging.ClientMessagingModule;
+import org.wallentines.midnightcore.api.module.extension.ServerExtension;
 import org.wallentines.midnightcore.api.module.messaging.MessagingModule;
 import org.wallentines.midnightcore.api.player.MPlayer;
 import org.wallentines.midnightcore.common.module.messaging.PacketBufferUtils;
-import org.wallentines.midnightcore.fabric.client.MidnightCoreClient;
 import org.wallentines.midnightcore.api.module.extension.ServerExtensionModule;
 import org.wallentines.midnightlib.Version;
-import org.wallentines.midnightlib.config.ConfigSection;
+import org.wallentines.mdcfg.ConfigSection;
 import org.wallentines.midnightlib.event.Event;
 import org.wallentines.midnightlib.module.ModuleInfo;
+import org.wallentines.nativeui.NativeUIExtension;
 
 public class FabricNativeUIExtension implements NativeUIExtension {
 
     private MenuManager manager;
 
-    private ExtensionModule module;
+    private ServerExtensionModule module;
 
     @Override
-    public boolean initialize(ConfigSection section, ExtensionModule data) {
+    public boolean initialize(ConfigSection section, ServerExtensionModule data) {
 
         module = data;
 
-        if(data.isClient()) {
+        MessagingModule mod = data.getServer().getModule(MessagingModule.class);
+        if(mod == null) return false;
 
-            ClientMessagingModule mod = MidnightCoreClient.CLIENT_MODULES.getModule(ClientMessagingModule.class);
-            if(mod == null) return false;
+        manager = new MenuManager(data, mod);
 
-            org.wallentines.nativeui.client.ClientNetworking.registerEvents(mod);
+        mod.registerHandler(Constants.CLICKED_PACKET, (mpl, buf) -> {
 
-        } else {
+            String id = PacketBufferUtils.readUtf(buf);
+            CustomMenu cm = manager.getOpenMenu(mpl);
 
-            MessagingModule mod = MidnightCoreAPI.getModule(MessagingModule.class);
-            if(mod == null) return false;
+            if (cm == null) {
+                NativeUI.LOGGER.warn("Player " + mpl.getUsername() + " sent invalid click packet!");
+                return;
+            }
 
-            manager = new MenuManager(data, mod);
+            CustomMenu.ClickAction act = cm.getClickAction(id);
+            if (act == null) return;
 
-            mod.registerHandler(Constants.CLICKED_PACKET, (mpl, buf) -> {
+            act.onClick(mpl);
+        });
 
-                String id = PacketBufferUtils.readUtf(buf);
-                CustomMenu cm = manager.getOpenMenu(mpl);
-
-                if (cm == null) {
-                    NativeUI.LOGGER.warn("Player " + mpl.getUsername() + " sent invalid click packet!");
-                    return;
-                }
-
-                CustomMenu.ClickAction act = cm.getClickAction(id);
-                if (act == null) return;
-
-                act.onClick(mpl);
-            });
-
-            mod.registerHandler(Constants.CLOSE_PACKET, (mpl, buf) -> {
-                manager.closeMenu(mpl);
-            });
-        }
+        mod.registerHandler(Constants.CLOSE_PACKET, (mpl, buf) -> {
+            manager.closeMenu(mpl);
+        });
 
         return true;
     }
@@ -72,17 +60,13 @@ public class FabricNativeUIExtension implements NativeUIExtension {
 
     public boolean isMenuSupported(MPlayer player, CustomMenu menu) {
 
-        if(module.isClient()) return false;
+        if(!module.playerHasExtension(player, NativeUIExtension.ID)) return false;
 
-        if(!((ServerExtensionModule) module).playerHasExtension(player, ID)) return false;
-
-        Version ver = ((ServerExtensionModule) module).getExtensionVersion(player, ID);
+        Version ver = module.getExtensionVersion(player, NativeUIExtension.ID);
         return ver.isGreaterOrEqual(menu.getMinimumSupportedVersion());
     }
 
     public void openMenu(MPlayer player, CustomMenu menu) {
-
-        if (module.isClient()) return;
 
         if (!isMenuSupported(player, menu)) {
             NativeUI.LOGGER.warn("Attempt to send incompatible menu to player " + player.getUsername() + "!");
@@ -95,8 +79,6 @@ public class FabricNativeUIExtension implements NativeUIExtension {
 
     public void openMenu(MPlayer player, CustomMenu menu, InventoryGUI fallback) {
 
-        if(module.isClient()) return;
-
         if(isMenuSupported(player, menu)) {
             manager.openMenu(player, menu);
             return;
@@ -107,11 +89,13 @@ public class FabricNativeUIExtension implements NativeUIExtension {
 
     public void closeMenu(MPlayer player) {
 
-        if(module.isClient()) return;
-
         manager.closeMenu(player);
     }
 
-    public static final ModuleInfo<ExtensionModule, Extension> MODULE_INFO = new ModuleInfo<>(FabricNativeUIExtension::new, ID, new ConfigSection());
+    public static final ModuleInfo<ServerExtensionModule, ServerExtension> MODULE_INFO = new ModuleInfo<>(FabricNativeUIExtension::new, NativeUIExtension.ID, new ConfigSection());
 
+    @Override
+    public Version getVersion() {
+        return Constants.CURRENT_VERSION;
+    }
 }

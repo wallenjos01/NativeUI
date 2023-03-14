@@ -3,7 +3,7 @@ package org.wallentines.nativeui;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
 import org.wallentines.midnightcore.api.MidnightCoreAPI;
-import org.wallentines.midnightcore.api.module.extension.ExtensionModule;
+import org.wallentines.midnightcore.api.module.extension.ServerExtensionModule;
 import org.wallentines.midnightcore.api.module.skin.Skin;
 import org.wallentines.midnightcore.api.text.MTextComponent;
 import org.wallentines.midnightcore.fabric.event.server.CommandLoadEvent;
@@ -54,11 +54,12 @@ public class TestStuff {
         menu.addImage(img);
 
         scroll.addChild(BuiltinControls.itemButton(menu, 10, 26, null, new Identifier("minecraft", "apple"), tt)).onClick("bruh");
+        scroll.addChild(new Image(menu, 10, 96, null, Image.generateCustomImageId(0), 32, 32, 0, 0));
 
-        menu.setClickAction("close", pl -> MidnightCoreAPI.getModule(ExtensionModule.class).getExtension(FabricNativeUIExtension.class).closeMenu(pl));
+        menu.setClickAction("close", pl -> MidnightCoreAPI.getModule(ServerExtensionModule.class).getExtension(FabricNativeUIExtension.class).closeMenu(pl));
         menu.setClickAction("bruh", pl -> {
             pl.sendMessage(new MTextComponent("Bruh"));
-            MidnightCoreAPI.getModule(ExtensionModule.class).getExtension(FabricNativeUIExtension.class).closeMenu(pl);
+            MidnightCoreAPI.getModule(ServerExtensionModule.class).getExtension(FabricNativeUIExtension.class).closeMenu(pl);
         });
 
         return menu;
@@ -75,7 +76,7 @@ public class TestStuff {
                         ServerPlayer spl = ctx.getSource().getPlayerOrException();
 
                         CustomMenu menu = getTestMenu();
-                        CommandUtil.getModule(ExtensionModule.class).getExtension(FabricNativeUIExtension.class).openMenu(FabricPlayer.wrap(spl), menu);
+                        CommandUtil.getModule(ServerExtensionModule.class).getExtension(FabricNativeUIExtension.class).openMenu(FabricPlayer.wrap(spl), menu);
 
                     } catch (Exception ex) {
                         ex.printStackTrace();

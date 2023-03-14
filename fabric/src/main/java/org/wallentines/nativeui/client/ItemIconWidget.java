@@ -19,6 +19,6 @@ public class ItemIconWidget extends PositionedWidget {
     @Override
     public void render(@NotNull PoseStack poseStack, int i, int j, float f) {
 
-        Minecraft.getInstance().getItemRenderer().renderGuiItem(is, x, y);
+        Minecraft.getInstance().getItemRenderer().renderGuiItem(poseStack, is, x, y);
     }
 }

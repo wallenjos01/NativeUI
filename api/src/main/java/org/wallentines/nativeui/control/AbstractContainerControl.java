@@ -1,8 +1,9 @@
 package org.wallentines.nativeui.control;
 
 import org.jetbrains.annotations.Nullable;
+import org.wallentines.mdcfg.ConfigList;
+import org.wallentines.mdcfg.ConfigSection;
 import org.wallentines.midnightcore.api.player.MPlayer;
-import org.wallentines.midnightlib.config.ConfigSection;
 import org.wallentines.nativeui.CustomMenu;
 
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ public abstract class AbstractContainerControl extends Control implements Contai
     @Override
     public void readFromConfig(ConfigSection config) {
 
-        for(ConfigSection sec : config.getListFiltered("children", ConfigSection.class)) {
+        for(ConfigSection sec : config.getListFiltered("children", ConfigSection.SERIALIZER)) {
             addChild(parse(menu, sec));
         }
     }
@@ -63,7 +64,7 @@ public abstract class AbstractContainerControl extends Control implements Contai
     @Override
     protected void addPacketData(ConfigSection config, MPlayer player) {
 
-        List<ConfigSection> children = new ArrayList<>();
+        ConfigList children = new ConfigList();
         for(Control ctr : getChildren()) {
             children.add(ctr.writeForPacket(player));
         }

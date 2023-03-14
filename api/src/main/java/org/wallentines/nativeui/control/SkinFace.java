@@ -1,9 +1,10 @@
 package org.wallentines.nativeui.control;
 
+import org.wallentines.mdcfg.ConfigSection;
+import org.wallentines.mdcfg.serializer.ConfigContext;
 import org.wallentines.midnightcore.api.module.skin.Skin;
 import org.wallentines.midnightcore.api.player.MPlayer;
 import org.wallentines.midnightlib.Version;
-import org.wallentines.midnightlib.config.ConfigSection;
 import org.wallentines.nativeui.Constants;
 import org.wallentines.nativeui.CustomMenu;
 
@@ -52,9 +53,9 @@ public class SkinFace extends Control {
 
         width = config.getInt("width");
         height = config.getInt("height");
-        showHat = config.getBoolean("hat", true);
+        showHat = config.getOrDefault("hat", true);
 
-        if(config.has("skin")) skin = Skin.SERIALIZER.deserialize(config.getSection("skin"));
+        if(config.has("skin")) skin = Skin.SERIALIZER.deserialize(ConfigContext.INSTANCE, config.getSection("skin")).getOrThrow();
     }
 
     @Override
@@ -64,7 +65,7 @@ public class SkinFace extends Control {
         config.set("height", height);
         config.set("hat", showHat);
 
-        if(skin != null) config.set("skin", Skin.SERIALIZER.serialize(skin));
+        if(skin != null) config.set("skin", Skin.SERIALIZER.serialize(ConfigContext.INSTANCE, skin).getOrThrow());
 
     }
 }
